@@ -95,5 +95,3 @@ This project is developed for educational purposes as part of the Time Series An
 - Open-source libraries that made this work possible
 
 ---
-
-*Last updated: [Current Date]*

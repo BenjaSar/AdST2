@@ -74,7 +74,7 @@ Our approach includes:
 
 Key libraries used in this project:
 
-- `torch` / `tensorflow` - Deep learning framework
+- `torch`  - Deep learning framework
 - `pandas` - Data manipulation
 - `numpy` - Numerical computing
 - `matplotlib` / `seaborn` - Data visualization
@@ -87,11 +87,5 @@ This is an academic project. For questions or suggestions, please contact any of
 ## License
 
 This project is developed for educational purposes as part of the Time Series Analysis 2 course.
-
-## Acknowledgments
-
-- Course instructors and teaching assistants
-- Research papers and resources that informed our methodology
-- Open-source libraries that made this work possible
 
 ---

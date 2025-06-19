@@ -18,6 +18,8 @@ Transformers have revolutionized natural language processing and are increasingl
 ## Project Structure
 
 ```
+.
+├── docs/                   # Documentation
 ├── notebooks/              # Jupyter notebooks with analysis
 ├── results/                # Output results and visualizations
 ├── requirements.txt        # Python dependencies

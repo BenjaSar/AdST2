@@ -46,7 +46,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
-Este trabajo presenta un análisis comparativo de modelos avanzados de deep learning para la predicción del precio de Bitcoin (BTC-USD). Se implementaron y evaluaron cuatro arquitecturas:  Transformer Vanilla para series temporales, TFT (\textit{Temporal Fusion Transformer}), Informer y  NHiTS (\textit{Neural Hierarchical Interpolation for Time Series}), utilizando datos históricos desde 2012 hasta la fecha.
+Este trabajo presenta un análisis comparativo de modelos avanzados de deep learning para la predicción del precio de Bitcoin (BTC-USD).
+Se implementaron y evaluaron cuatro arquitecturas: Transformer Vanilla para series temporales, TFT (\textit{Temporal Fusion Transformer}),
+Informer y NHiTS (\textit{Neural Hierarchical Interpolation for Time Series}), utilizando distintas ventanas temporales para el entrenamiento.
 Los resultados demuestran que los modelos pueden capturar patrones complejos en los datos. % TODO con el <mejor modelo> alcanzando un MAE de <??> en el conjunto de prueba.
 El estudio incluye un análisis exhaustivo de preprocesamiento, diseño de modelos y validación de resultados, concluyendo con recomendaciones para futuras mejoras.
 \end{abstract}
@@ -78,7 +80,7 @@ El dataset contiene:
 
 \begin{itemize}
 \item \textbf{Fuente}: Kaggle (Bitcoin Historical Data)
-\item \textbf{Período}: 2012-01-01 a 2025-06-?? % TODO
+\item \textbf{Período}: 2020-01-01 a 2023-12-31
 \item \textbf{Variables utilizadas}:
 \begin{table}[H]
 \centering
@@ -120,9 +122,10 @@ al rango [0, 1].
 Esto facilita el entrenamiento de los modelos de deep learning, ya que evita problemas numéricos asociados a
 diferentes escalas.
 
-\item \textbf{Creación de secuencias}: Para poder alimentar los modelos, los datos fueron transformados en ventanas deslizantes.
-Se definió una longitud de entrada de 30? días y un horizonte de predicción de 10? días. % TODO
-Cada muestra consiste en una secuencia de precios normalizados para entrenar el modelo a predecir el comportamiento futuro.
+\item \textbf{Configuración del modelo}: Para alimentar los modelos de la librería Darts no fue necesario
+construir manualmente ventanas deslizantes. En su lugar, se definieron parámetros como la longitud de entrada
+y el horizonte de predicción, y los modelos se encargaron automáticamente de generar las secuencias necesarias
+a partir de los datos históricos escalados.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,27 +133,9 @@ Cada muestra consiste en una secuencia de precios normalizados para entrenar el 
 \newpage
 \subsection{Modelos Implementados}
 
-Se implementaron tres modelos de predicción de series temporales utilizando distintas arquitecturas: una red LSTM construida manualmente en PyTorch,
-un Transformer Vanilla con la librería \texttt{darts}, y un modelo NHiTS también con \texttt{darts}.
-Todos fueron entrenados usando una ventana de entrada sobre datos diarios normalizados y se evaluaron sobre los últimos 100 días del año más reciente.
-
-%\subsubsection{Modelo LSTM}
-
-%La red LSTM (Long Short-Term Memory) es una arquitectura recurrente diseñada específicamente para capturar dependencias a largo plazo en secuencias
-%temporales.
-
-%\begin{itemize}
-%\item Modelo construido manualmente en PyTorch.
-%\item Hiperparámetros clave:
-%\begin{itemize}
-%\item Capas LSTM: 2 (con 100 y 50 unidades)
-%\item Capas densas: 2 (con 25 y 1 unidad final)
-%\item Ventana de entrada: 60 días  % TODO: deberia ser lo mismo que con transformers
-%\item Dropout: 0.2
-%\item Épocas: 20
-%\end{itemize}
-%\item Entrenamiento supervisado sobre secuencias de precios normalizados, prediciendo horizontes de 10 días.
-%\end{itemize}
+Se implementaron cuatro modelos de predicción de series temporales utilizando distintas arquitecturas.
+Todos fueron entrenados usando tres ventanas de entrada diferentes sobre datos diarios normalizados y se
+evaluaron sobre los siguientes 10 días.
 
 \subsubsection{Transformer Vanilla para Series Temporales}
 
@@ -160,16 +145,15 @@ El modelo implementado se basa en la arquitectura clásica de encoder-decoder, u
 \item Modelo implementado con \texttt{darts.models.TransformerModel}.
 \item Hiperparámetros clave:
 \begin{itemize}
-\item Ventana de entrada: 30 días
-\item Horizonte de predicción: 10 días
-\item Dimensión del modelo (\texttt{d\_model}): 64
+\item Dimensión del modelo (\texttt{d\_model}): 64 % TODO: revisar/actualizar
 \item Número de capas: 2 encoder y 2 decoder
 \item Cabezas de atención: 4
 \item Dropout: 0.1
-\item Épocas: 20
+\item Épocas: 100
 \end{itemize}
-\item Entrenado sobre el último año de datos, reservando los últimos 100 días para evaluación.
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Modelo NHiTS}
 
@@ -179,51 +163,45 @@ NHiTS (Neural Hierarchical Interpolation for Time Series) es una arquitectura de
 \item Modelo implementado con \texttt{darts.models.NHiTSModel}.
 \item Hiperparámetros clave:
 \begin{itemize}
-\item Ventana de entrada: 30 días
-\item Horizonte de predicción: 10 días
-\item Bloques jerárquicos: 1
+\item Bloques jerárquicos: 1 % TODO: revisar/actualizar
 \item Capas por bloque: 2
 \item Ancho de cada capa: 64
 \item Dropout: 0.1
-\item Épocas: 20
+\item Épocas:  100
 \end{itemize}
-\item Entrenado con la misma configuración de entrenamiento y testeo que el modelo Transformer Vanilla.
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Modelo TFT}
-El modelo TFT es una arquitectura avanzada de deep learning diseñada específicamente para el pronóstico de series temporales multivariadas. Desarrollado por Google Research, combina la potencia de los mecanismos de atención de los Transformers con técnicas especializadas para el manejo de datos temporales.
 
-Los parámetros considerados para el entranamiento de este modelo se describen a continuación.
+El modelo TFT es una arquitectura avanzada de deep learning diseñada específicamente para el pronóstico de series temporales multivariadas.
+Desarrollado por Google Research, combina la potencia de los mecanismos de atención de los Transformers con técnicas especializadas para el manejo de datos temporales.
 
 \begin{itemize}
 \item Modelo implementado con \texttt{darts.models.TFTModel}.
 \item Hiperparámetros clave:
 \begin{itemize}
-\item Ventana de entrada: 30 días
-\item Horizonte de predicción: 10 días
-\item Bloques jerárquicos: 1
+\item Bloques jerárquicos: 1 % TODO: revisar/actualizar
 \item Capas por bloque: 2
 \item Ancho de cada capa: 64
 \item Dropout: 0.1
 \item lstm layers: 2
-\item Épocas: 20
+\item Épocas: 100
 \end{itemize}
-\item Entrenado con la misma configuración de entrenamiento y testeo que el modelo Transformer Vanilla.
 \end{itemize}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Modelo Informer}
 
-Informer es una arquitectura de aprendizaje profundo diseñada específicamente para  la predicción eficiente y escalable de series temporales, en particular para tareas de predicción de secuencias largas. Se presentó en el artículo ""\texttt{Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting" by Zhou et al., 2021."}.
-
+Informer es una arquitectura de aprendizaje profundo diseñada específicamente para la predicción eficiente y escalable de series temporales, en particular para tareas de predicción de secuencias largas.
+Se presentó en el artículo ""\texttt{Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting" by Zhou et al., 2021."}.
 
 \begin{itemize}
-\item Modelo implementado con \texttt{darts.models.NHiTSModel}.
+\item Modelo implementado con \texttt{neuralforecast.models.Informer}.
 \item Hiperparámetros clave:
 \begin{itemize}
-\item Ventana de entrada: 30 días
-\item Horizonte de predicción: 10 días
 \item Capas ocultas convolucionales: 64
 \item Número de cabezas: 2
 \item Número de capas ocultas: 32
@@ -231,7 +209,6 @@ Informer es una arquitectura de aprendizaje profundo diseñada específicamente 
 \item Dropout: 0.3
 \item Épocas: 500
 \end{itemize}
-\item Este modelo fue entrenado con los parámetros propuestos por la literatura.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,17 +217,21 @@ Informer es una arquitectura de aprendizaje profundo diseñada específicamente 
 \section{Resultados}
 \label{sec:resultados}
 
-\subsection{Validación del Modelo}
+\subsection{Validación de los modelos}
 
-Se utilizó una división del dataset en:
-\begin{itemize}
-\item 80\% para entrenamiento
-\item 10\% para validación
-\item 10\% para prueba
-\end{itemize}
+La validación se llevó a cabo de forma interna por los modelos de Darts, utilizando una fracción del
+conjunto de entrenamiento para evaluar el rendimiento durante el proceso de entrenamiento.
+No se realizó una partición explícita del dataset original en proporciones fijas.
+En su lugar, para cada configuración de ventana histórica, se seleccionó un rango temporal
+fijo para entrenamiento (train) y un horizonte consecutivo para prueba (test).
+La validación se realiza dentro del train para evitar fugas de información.
 
-Se aplicó \textbf{early stopping} para evitar overfitting, con una tolerancia de 5 épocas. También se probaron distintos horizontes de predicción (5, 10, 15 días), confirmando que el rendimiento decae a medida que aumenta el horizonte.
+Se aplicó \textbf{early stopping} para evitar overfitting, con una tolerancia de 5 épocas.
+También se probaron distintos horizontes de predicción (5, 10, 15 días), confirmando que el rendimiento decae a medida que aumenta el horizonte.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ % TODO: revisar/actualizar
 \bigskip
 \subsection{Métricas de evaluación}
 
@@ -261,7 +242,7 @@ En las tablas \ref{metricas_3_meses} a  \ref{metricas_1_anio} se muestran las m�
 \caption{Métricas de desempeño por ventana de entrenamiento (1 año).}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Métrica} & \textbf{Transformer} & \textbf{NHiTs} & \textbf{TFT} & \textbf{Informer} \\ 
+\textbf{Métrica} & \textbf{Transformer} & \textbf{NHiTs} & \textbf{TFT} & \textbf{Informer} \\
 \midrule
 MAE (USD)  & 0.006970 & 0.01910 & 0.06530 & 0.02220 \\
 RMSE (USD) & 0.07370 & 0.02250 & 0.09380 & 0.02810 \\
@@ -276,7 +257,7 @@ MAPE (\%)  & 11.47 & 3.19 & 10.80 & 3.72 \\
 \caption{Métricas de desempeño por ventana de entrenamiento (6 meses).}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Métrica} & \textbf{Transformer} & \textbf{NHiTs} & \textbf{TFT} & \textbf{Informer} \\ 
+\textbf{Métrica} & \textbf{Transformer} & \textbf{NHiTs} & \textbf{TFT} & \textbf{Informer} \\
 \midrule
 MAE (USD)  & 0.002760 & 0.02170 & 0.04090 & 0.01400 \\
 RMSE (USD) & 0.03150 & 0.02550 & 0.05440 & 0.01680 \\
@@ -292,7 +273,7 @@ MAPE (\%)  & 4.58 & 3.62 & 6.70 & 2.33 \\
 \caption{Métricas de desempeño por ventana de entrenamiento (1 año).}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Métrica} & \textbf{Transformer} & \textbf{NHiTs} & \textbf{TFT} & \textbf{Informer} \\ 
+\textbf{Métrica} & \textbf{Transformer} & \textbf{NHiTs} & \textbf{TFT} & \textbf{Informer} \\
 \midrule
 MAE (USD)  & 0.002340 & 0.02830 & 0.03020 & 0.01940 \\
 RMSE (USD) & 0.02640 & 0.03280 & 0.03640 & 0.02330 \\
@@ -305,50 +286,50 @@ MAPE (\%)  & 3.90 & 4.72 & 4.90 & 3.17 \\
 
 En las figuras \ref{mae} a \ref{rmse} se observan las diferentes métricas (MAE, MAPE, RMSE) obtenidas y las ventanas de tiempo consideradas.
 
-\begin{figure}[H] 
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{./results/comparacion_modelos_por_MAE.png} 
+\includegraphics[width=0.85\textwidth]{../results/comparacion_modelos_por_MAE.png}
 \caption{Comparativa MAE vs venta de entrenamiento.}
 \label{mae}
 \end{figure}
 
-\begin{figure}[H] 
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{./results/comparacion_modelos_por_MAPE.png} 
+\includegraphics[width=0.85\textwidth]{../results/comparacion_modelos_por_MAPE.png}
 \caption{Comparativa MAPE vs venta de entrenamiento.}
 \label{mape}
 \end{figure}
 
-\begin{figure}[H] 
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{./results/comparacion_modelos_por_RMSE.png} 
+\includegraphics[width=0.85\textwidth]{../results/comparacion_modelos_por_RMSE.png}
 \caption{Comparativa RMSE vs venta de entrenamiento.}
 \label{rmse}
 \end{figure}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Predicciones de los diferentes modelos}
 
-En las figuras \ref{prediccion_tres_meses} a \ref{prediccion_un_anio} se podrán observar las predicciones de los modelos evaluados en este trabajo.
+En las figuras \ref{prediccion_tres_meses} a \ref{prediccion_un_anio} se pueden observar las predicciones de los modelos evaluados en este trabajo.
 
-\begin{figure}[H] 
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{./results/prediccion_10_dias_ventana_3_meses.png} 
+\includegraphics[width=0.85\textwidth]{../results/prediccion_10_dias_ventana_3_meses.png}
 \caption{Predicciones vs Real a 10 días - ventana de entrenamiento 3 meses}
 \label{prediccion_tres_meses}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{./results/prediccion_10_dias_ventana_6_meses.png} 
+\includegraphics[width=0.85\textwidth]{../results/prediccion_10_dias_ventana_6_meses.png}
 \caption{Predicciones vs Real a 10 días - ventana de entrenamiento 6 meses}
 \label{prediccion_seis_meses}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{./results/prediccion_10_dias_ventana_1_anio.png}
+\includegraphics[width=0.85\textwidth]{../results/prediccion_10_dias_ventana_1_anio.png}
 \caption{Predicciones vs Real a 10 días - ventana de entrenamiento 1 año}
 \label{prediccion_un_anio}
 \end{figure}

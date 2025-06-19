@@ -39,6 +39,18 @@ Transformers have revolutionized natural language processing and are increasingl
 ```bash
 git clone [repository-url]
 cd [repository-name]
+```
+
+### Create and activate virtual enviroment
+
+```
+python -m venv venv
+source venv/bin/activate  # In Windows: venv\Scripts\activate
+```
+
+### Install the requeriments
+
+```
 pip install -r requirements.txt
 ```
 

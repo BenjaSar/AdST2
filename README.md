@@ -53,10 +53,9 @@ pip install -r requirements.txt
 
 ### Usage
 
-1. **Data Preparation**: Place your time series data in the `data/` directory
-2. **Exploration**: Start with the notebooks in `notebooks/` for exploratory analysis
-3. **Training**: Use the scripts in `src/` to train Transformer models
-4. **Evaluation**: Review results and visualizations in the `results/` directory
+1. **EDA**: Use `notebooks/EDA.ipynb` for exploratory analysis
+2. **Training and evaluation**: Use `notebooks/models.ipynb` to train and evaluate Transformer models
+3. **Hyperparameter tuning**: Use `notebooks/models_retrained_best-params.ipynb`
 
 ## Key Features
 

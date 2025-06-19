@@ -18,13 +18,10 @@ Transformers have revolutionized natural language processing and are increasingl
 ## Project Structure
 
 ```
-├── data/                   # Dataset files
 ├── notebooks/              # Jupyter notebooks with analysis
-├── src/                    # Source code modules
-├── models/                 # Trained model files
 ├── results/                # Output results and visualizations
 ├── requirements.txt        # Python dependencies
-└── README.md              # This file
+└── README.md               # This file
 ```
 
 ## Getting Started
@@ -80,17 +77,7 @@ Our approach includes:
 
 ## Results
 
-[Brief summary of key findings and performance metrics will be added here]
-
-## Dependencies
-
-Key libraries used in this project:
-
-- `torch`  - Deep learning framework
-- `pandas` - Data manipulation
-- `numpy` - Numerical computing
-- `matplotlib` / `seaborn` - Data visualization
-- `scikit-learn` - Machine learning utilities
+See `docs/informe.pdf`.
 
 ## Contributing
 

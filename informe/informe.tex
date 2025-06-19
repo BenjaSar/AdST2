@@ -96,7 +96,7 @@ El dataset empleado presenta las siguientes característcias:
 
 \begin{itemize}
 \item \textbf{Fuente}: Kaggle (Bitcoin Historical Data)
-\item \textbf{Período}: 2012-01-01 a 2025-06-?? % TODO
+\item \textbf{Período}: 2020-01-01 a 2023-12-31 
 \item \textbf{Variables utilizadas}:
 \begin{table}[H]
 \centering
@@ -149,7 +149,7 @@ Cada muestra consiste en una secuencia de precios normalizados para entrenar el 
 
 Se implementaron cuatro modelos de predicción de series temporales utilizando distintas arquitecturas.
 %Todos fueron entrenados usando tres ventanas de entrada diferentes sobre datos diarios normalizados y se evaluaron sobre los siguientes 10 días
-Todos los modelos fueron entrenados siguiendo un protocolo estandarizado utilizando tres configuraciones de ventanas de entrada temporales: 30, 60 y 90 días históricos, permitiendo evaluar el impacto de diferentes horizontes de contexto temporal en la capacidad predictiva.
+Todos los modelos fueron entrenados siguiendo un protocolo estandarizado utilizando tres configuraciones de ventanas de entrada temporales: 90, 180 y 365 días históricos, permitiendo evaluar el impacto de diferentes horizontes de contexto temporal en la capacidad predictiva.
 %\subsubsection{Modelo LSTM}
 
 %La red LSTM (Long Short-Term Memory) es una arquitectura recurrente diseñada específicamente para capturar dependencias a largo plazo en secuencias
@@ -226,7 +226,7 @@ Informer es una arquitectura de aprendizaje profundo diseñada específicamente 
 
 
 \begin{itemize}
-\item Modelo implementado con \texttt{darts.models.NHiTSModel}.
+\item Modelo implementado con \texttt{from neuralforecast.models import Informer}.
 \item Hiperparámetros clave:
 \begin{itemize}
 \item Capas ocultas convolucionales: 64
@@ -245,6 +245,7 @@ Informer es una arquitectura de aprendizaje profundo diseñada específicamente 
 \label{sec:resultados}
 
 \subsection{Validación del Modelo}
+La validación se llevó a cabo de forma interna por los modelos de Darts, utilizando una fracción del conjunto de entrenamiento para evaluar el rendimiento durante el proceso de entrenamiento. No se realizó una partición fija del dataset original en proporciones fijas. En su lugar,  para cada configuración de ventana histórica, se seleccionó un rango temporal fijo para entrenamiento(\textit{train}) y un horizonte consecutivo para pruebas(\textit{test}). La validación se realizó dentro del entrenamiento para evitar fugas de información.
 
 Se utilizó una división del dataset en:
 \begin{itemize}
